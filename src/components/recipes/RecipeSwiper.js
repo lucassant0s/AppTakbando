@@ -18,16 +18,27 @@ import Swiper from 'react-native-swiper';
 export default class RecipeSwiper extends Component {
     constructor(props) {
         super(props);
+
+        this.state = {
+            userLoggedIn: false
+        };
     }
 
     render () {
-        const { image, title, ingredients, steps } = this.props.navigation.state.params;
+        let { image, title, site_name, ingredients, steps, portions, preparation_time } = this.props.navigation.state.params;
+        ingredients = ingredients.filter((ing) => {
+            return (ing !== (undefined || null || ''));
+        });
+
+        steps = steps.filter((st) => {
+            return (st !== (undefined || null || ''));
+        });
         return (
             <Image 
-                source={{uri: 'http://img.itdg.com.br/tdg/images/recipes/000/007/945/230248/230248_original.jpg?mode=crop&width=370&height=278'}} 
+                source={{uri: image}} 
                 style={styles.container}
             >
-                <Swiper style={styles.wrapper} showsButtons={false}>
+                <Swiper style={styles.wrapper} showsButtons={true} showsPagination={false}>
                     <ScrollView style={styles.slide1}>
                         <View style={{
                             flex: 1,
@@ -52,8 +63,10 @@ export default class RecipeSwiper extends Component {
                                     <Text style={styles.text_title_ing}>Ingredientes</Text>
                                 </View>
                                 {
-                                    steps.map((ing, index) => (
-                                        <Text style={styles.text_ing}>{ing}</Text>
+                                    ingredients.map((ing, index) => (
+                                        ing && (
+                                            <Text style={styles.text_ing}>{ing}</Text>
+                                        )
                                     ))
                                 }
                             </View>
@@ -61,22 +74,30 @@ export default class RecipeSwiper extends Component {
                                 <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start'}}>
                                     <View style={{flexDirection: 'row'}}>
                                         <Icon name='pie-chart' size={12} color='#ff807b' type='font-awesome' />
-                                        <Text style={{fontSize: 12, marginLeft: 3, marginRight: 5, marginBottom: 5, fontFamily: 'Lato-Regular', color: '#fff'}}>12 Porções</Text>
+                                        <Text style={{fontSize: 12, marginLeft: 3, marginRight: 5, marginBottom: 5, fontFamily: 'Lato-Regular', color: '#fff'}}>{portions} Porções</Text>
                                     </View>
-                                    <View style={{flexDirection: 'row'}}>
-                                        <Icon name='users' size={12} color='#ff807b' type='font-awesome' />
-                                        <Text style={{fontSize: 12, marginLeft: 3, marginRight: 5, marginBottom: 5, fontFamily: 'Lato-Regular', color: '#fff'}}>45 Comentários</Text>
-                                    </View>
+                                    {
+                                        this.state.userLoggedIn && (
+                                            <View style={{flexDirection: 'row'}}>
+                                                <Icon name='users' size={12} color='#ff807b' type='font-awesome' />
+                                                <Text style={{fontSize: 12, marginLeft: 3, marginRight: 5, marginBottom: 5, fontFamily: 'Lato-Regular', color: '#fff'}}>45 Comentários</Text>
+                                            </View>
+                                        )
+                                    }
                                 </View>
                                 <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start'}}>
                                     <View style={{flexDirection: 'row'}}>
                                         <Icon name='clock-o' size={12} color='#ff807b' type='font-awesome' />
-                                        <Text style={{fontSize: 12, marginLeft: 3, marginRight: 5, marginBottom: 5, fontFamily: 'Lato-Regular', color: '#fff'}}>45 Minutos</Text>
+                                        <Text style={{fontSize: 12, marginLeft: 3, marginRight: 5, marginBottom: 5, fontFamily: 'Lato-Regular', color: '#fff'}}>{preparation_time}</Text>
                                     </View>
-                                    <View style={{flexDirection: 'row'}}>
-                                        <Icon name='heart-o' size={12} color='#ff807b' type='font-awesome' />
-                                        <Text style={{fontSize: 12, marginLeft: 3, marginRight: 5, marginBottom: 5, fontFamily: 'Lato-Regular', color: '#fff'}}>15</Text>
-                                    </View>
+                                    {
+                                        this.state.userLoggedIn && (
+                                            <View style={{flexDirection: 'row'}}>
+                                                <Icon name='heart-o' size={12} color='#ff807b' type='font-awesome' />
+                                                <Text style={{fontSize: 12, marginLeft: 3, marginRight: 5, marginBottom: 5, fontFamily: 'Lato-Regular', color: '#fff'}}>15</Text>
+                                            </View>
+                                        )
+                                    }
                                 </View>
                             </View>
                         </View>
@@ -104,11 +125,13 @@ export default class RecipeSwiper extends Component {
                                     <Text style={styles.text_title_ing}>Modo de Preparo</Text>
                                 </View>
                                 {
-                                    ingredients.map((ing, index) => (
-                                        <View style={{flexDirection: 'row'}}>
-                                            <Text style={styles.text_st_index}>{index + 1}º - </Text>
-                                            <Text style={styles.text_st}>{ing}</Text>
-                                        </View>
+                                    steps.map((st, index) => (
+                                        st && (
+                                            <View style={{flexDirection: 'row'}}>
+                                                <Text style={styles.text_st_index}>{index + 1}º - </Text>
+                                                <Text style={styles.text_st}>{st}</Text>
+                                            </View>
+                                        )
                                     ))
                                 }
                             </View>
@@ -116,32 +139,36 @@ export default class RecipeSwiper extends Component {
                                 <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start'}}>
                                     <View style={{flexDirection: 'row'}}>
                                         <Icon name='pie-chart' size={12} color='#ff807b' type='font-awesome' />
-                                        <Text style={{fontSize: 12, marginLeft: 3, marginRight: 5, marginBottom: 5, fontFamily: 'Lato-Regular', color: '#fff'}}>12 Porções</Text>
+                                        <Text style={{fontSize: 12, marginLeft: 3, marginRight: 5, marginBottom: 5, fontFamily: 'Lato-Regular', color: '#fff'}}>{portions} Porções</Text>
                                     </View>
-                                    <View style={{flexDirection: 'row'}}>
-                                        <Icon name='users' size={12} color='#ff807b' type='font-awesome' />
-                                        <Text style={{fontSize: 12, marginLeft: 3, marginRight: 5, marginBottom: 5, fontFamily: 'Lato-Regular', color: '#fff'}}>45 Comentários</Text>
-                                    </View>
+                                    {
+                                        this.state.userLoggedIn && (
+                                            <View style={{flexDirection: 'row'}}>
+                                                <Icon name='users' size={12} color='#ff807b' type='font-awesome' />
+                                                <Text style={{fontSize: 12, marginLeft: 3, marginRight: 5, marginBottom: 5, fontFamily: 'Lato-Regular', color: '#fff'}}>45 Comentários</Text>
+                                            </View>
+                                        )
+                                    }
                                 </View>
                                 <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start'}}>
                                     <View style={{flexDirection: 'row'}}>
                                         <Icon name='clock-o' size={12} color='#ff807b' type='font-awesome' />
-                                        <Text style={{fontSize: 12, marginLeft: 3, marginRight: 5, marginBottom: 5, fontFamily: 'Lato-Regular', color: '#fff'}}>45 Minutos</Text>
+                                        <Text style={{fontSize: 12, marginLeft: 3, marginRight: 5, marginBottom: 5, fontFamily: 'Lato-Regular', color: '#fff'}}>{preparation_time}</Text>
                                     </View>
-                                    <View style={{flexDirection: 'row'}}>
-                                        <Icon name='heart-o' size={12} color='#ff807b' type='font-awesome' />
-                                        <Text style={{fontSize: 12, marginLeft: 3, marginRight: 5, marginBottom: 5, fontFamily: 'Lato-Regular', color: '#fff'}}>15</Text>
-                                    </View>
+                                    {
+                                        this.state.userLoggedIn && (
+                                            <View style={{flexDirection: 'row'}}>
+                                                <Icon name='heart-o' size={12} color='#ff807b' type='font-awesome' />
+                                                <Text style={{fontSize: 12, marginLeft: 3, marginRight: 5, marginBottom: 5, fontFamily: 'Lato-Regular', color: '#fff'}}>15</Text>
+                                            </View>
+                                        )
+                                    }
                                 </View>
                             </View>
                         </View>
                     </ScrollView>
                     <ScrollView style={styles.slide3}>
-                    <View style={{
-                        flex: 1,
-                        flexDirection: 'column',
-                        justifyContent: 'space-around',
-                    }}>
+                    <View style={styles.container}>
                         <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 20}}>
                             <Icon
                                 name='arrow-left'
@@ -153,26 +180,32 @@ export default class RecipeSwiper extends Component {
                             <Text style={styles.text_title}>{title}</Text>
                             <View style={{marginTop: 10, marginHorizontal: 20}}></View>
                         </View>
-                            <View style={{flexDirection: 'row', marginVertical: 20}}>
-                                <SocialIcon
-                                    type='twitter'
-                                />
-                                <SocialIcon
-                                    type='facebook'
-                                />
-                                <SocialIcon
-                                    type='instagram'
-                                />
-                            </View>
+                        <View style={{ flexDirection: 'row', marginVertical: '55%', marginHorizontal: '25%'}}>
+                            <SocialIcon
+                                type='twitter'
+                            />
+                            <SocialIcon
+                                type='facebook'
+                            />
+                            <SocialIcon
+                                type='instagram'
+                            />
                         </View>
-                    </ScrollView>
-                </Swiper>
-            </Image>
+                    </View>
+                </ScrollView>
+            </Swiper>
+        </Image>
         );
     }
 }
 
 var styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#F5FCFF',
+    },
     wrapper: {
         
     },
@@ -188,6 +221,7 @@ var styles = StyleSheet.create({
     text_title: {
         color: '#fff',
         fontSize: 25,
+        width: 300,
         fontFamily: 'LeckerliOne-Regular',
     },
     text_title_ing: {

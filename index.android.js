@@ -9,7 +9,8 @@ import {
   AppRegistry,
   StyleSheet,
   Text,
-  View
+  View,
+  UIManager
 } from 'react-native';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
@@ -33,4 +34,5 @@ export default class AppTakbando extends Component {
   }
 }
 
+UIManager.setLayoutAnimationEnabledExperimental(true);
 AppRegistry.registerComponent('AppTakbando', () => AppTakbando);

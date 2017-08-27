@@ -205,5 +205,9 @@ export const Rooter = DrawerNavigator({
     initialRouteName: 'Home',
     headerMode: 'screen',
     drawerWidth: 250,
-    gesturesEnabled: false
+    gesturesEnabled: false,
+    style: {
+        fontFamily: 'Comfortaa-Regular',
+        fontSize: 22
+    }
 });

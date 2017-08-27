@@ -19,14 +19,17 @@ export default class RecipeItemDetail extends Component {
         super(props);
 
         this.state = {
-            recipe: {}
+            recipe: {},
+            userLoggedIn: false,
         }
     }
 
     componentWillMount = () => {
+        let recipe = this.props.navigation.state.params;
+        recipe.preparation_time = recipe.site_name === 'All Recipes' ? recipe.preparation_time : `${recipe.preparation_time} minutos`
         this.setState({
-            recipe: this.props.navigation.state.params
-        })
+            recipe
+        });
     }
 
     static navigationOptions = {
@@ -34,18 +37,14 @@ export default class RecipeItemDetail extends Component {
     }
 
     onRecipeSwiper = () => {
-        let recipeSwiper = {};
-        recipeSwiper.title = this.state.recipe.title;
-        recipeSwiper.ingredients = this.state.recipe.ingredients;
-        recipeSwiper.steps = this.state.recipe.steps;
-        this.props.navigation.navigate('RecipeSwiper', {...recipeSwiper});
+        this.props.navigation.navigate('RecipeSwiper', {...this.state.recipe});
     }
 
     render () {
         const onRecipeSwiper = _throttle(this.onRecipeSwiper, 3000, { 'trailing': false });
         return (
             <Image 
-                source={{ uri: 'http://img.itdg.com.br/tdg/images/recipes/000/007/945/230248/230248_original.jpg?mode=crop&width=370&height=278'}} 
+                source={{ uri: this.state.recipe.image }} 
                 style={styles.container}
             >
                 <View
@@ -69,7 +68,7 @@ export default class RecipeItemDetail extends Component {
                         <Avatar
                             large
                             rounded
-                            source={{uri: "https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg"}}
+                            source={{uri: this.state.recipe.image_site}}
                             onPress={() => console.log("Works!")}
                         />
                         <View style={{marginTop: 10, marginHorizontal: 20}}></View>
@@ -96,17 +95,21 @@ export default class RecipeItemDetail extends Component {
                                 <Text 
                                     style={{fontSize: 12, marginLeft: 3, marginRight: 5, marginBottom: 5, fontFamily: 'Lato-Regular', color: '#666'}}
                                 >
-                                    0 Porções
+                                    {this.state.recipe.portions} Porções
                                 </Text>
                             </View>
-                            <View style={{flexDirection: 'row'}}>
-                                <Icon name='users' size={12} color='#ff807b' type='font-awesome' />
-                                <Text 
-                                    style={{fontSize: 12, marginLeft: 3, marginRight: 5, marginBottom: 5, fontFamily: 'Lato-Regular', color: '#666'}}
-                                >
-                                    0 Comentários
-                                </Text>
-                            </View>
+                            {
+                                this.state.userLoggedIn && (
+                                    <View style={{flexDirection: 'row'}}>
+                                        <Icon name='users' size={12} color='#ff807b' type='font-awesome' />
+                                        <Text 
+                                            style={{fontSize: 12, marginLeft: 3, marginRight: 5, marginBottom: 5, fontFamily: 'Lato-Regular', color: '#666'}}
+                                        >
+                                            0 Comentários
+                                        </Text>
+                                    </View>
+                                )
+                            }
                         </View>
                         <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start'}}>
                             <View style={{flexDirection: 'row'}}>
@@ -114,39 +117,48 @@ export default class RecipeItemDetail extends Component {
                                 <Text 
                                     style={{fontSize: 12, marginLeft: 3, marginRight: 5, marginBottom: 5, fontFamily: 'Lato-Regular', color: '#666'}}
                                 >
-                                    0 Minutos
+                                    {this.state.recipe.preparation_time}
                                 </Text>
                             </View>
-                            <View style={{flexDirection: 'row'}}>
-                                <Icon name='heart-o' size={12} color='#ff807b' type='font-awesome' />
-                                <Text 
-                                    style={{fontSize: 12, marginLeft: 3, marginRight: 5, marginBottom: 5, fontFamily: 'Lato-Regular', color: '#666'}}
-                                >
-                                    0 
-                                </Text>
-                            </View>
+                            {
+                                this.state.userLoggedIn && (
+                                    <View style={{flexDirection: 'row'}}>
+                                        <Icon name='heart-o' size={12} color='#ff807b' type='font-awesome' />
+                                        <Text 
+                                            style={{fontSize: 12, marginLeft: 3, marginRight: 5, marginBottom: 5, fontFamily: 'Lato-Regular', color: '#666'}}
+                                        >
+                                            0 
+                                        </Text>
+                                    </View>
+                                )
+                            }
                         </View>
                     </View>
                 </View>
-                
+
                 <View
                     style={{
                         flex: 1,
                         flexDirection: 'column',
                         justifyContent: 'center'
                     }}
-                >
-                    <Icon
-                        name='heart-o'
-                        type='font-awesome'
-                        size={130}
-                        underlayColor='transparent'
-                        activeOpacity={0.1} accessible={true}
-                        color='#ff807b'
-                        reverseColor='transparent'
-                        onPress={() => console.log('hello')} 
-                    />
+                    >
+                    {
+                        this.state.userLoggedIn && (
+                            <Icon
+                                name='heart-o'
+                                type='font-awesome'
+                                size={130}
+                                underlayColor='transparent'
+                                activeOpacity={0.1} accessible={true}
+                                color='#ff807b'
+                                reverseColor='transparent'
+                                onPress={() => console.log('hello')} 
+                            />
+                        )
+                    }
                 </View>
+                
 
                 <View
                     style={{

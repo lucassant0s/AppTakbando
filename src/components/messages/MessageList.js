@@ -12,19 +12,25 @@ import MessageListItem from './MessageListItem';
 import { handlerMessageToast, API_URI } from '../../config/utils';
 
 
+const message = {
+    image: 'https://pbs.twimg.com/media/CMJrb1_WoAA3aPT.png',
+    title: 'Teste Mensagens',
+    message: 'Lorem Ipsum é simplesmente uma simulação de texto da indústria tipográfica e de impressos, e vem sendo utilizado desde o século XVI, quando um impressor desconhecido pegou uma bandeja de tipos e os embaralhou para fazer um livro de modelos de tipos.'
+};
+
 export default class MessageList extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            messages: [],
+            messages: [...message],
             loading: false,
             refreshing: false,
 
             limit: 3,
             skip: 0,
 
-            animating: true,
+            animating: false,
         };
     }
 
@@ -86,7 +92,7 @@ export default class MessageList extends Component {
               skip: this.state.skip + 3
             },
             () => {
-                this.getListMessage();
+                // this.getListMessage();
             }
         );
     }
@@ -111,17 +117,8 @@ export default class MessageList extends Component {
 
     render () {
         return (
-            <FlatList
-                data={this.state.recipes}
-                renderItem={this._renderItem}
-                keyExtractor={this._keyExtractor}
-                ListFooterComponent={this.renderFooter}
-                onRefresh={this.handleRefresh}
-                refreshing={this.state.refreshing}
-                onEndReached={this.handleLoadMore}
-                onEndReachedThreshold={50}
-                disableVirtualization={false}
-                style={{marginVertical: 0}}
+            <MessageListItem 
+                message={message}
             />
         );
     }

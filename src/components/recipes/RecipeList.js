@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import {
     View,
     ScrollView,
@@ -6,19 +6,20 @@ import {
     FlatList,
     Image,
     ActivityIndicator,
-    StyleSheet
+    StyleSheet,
 } from 'react-native';
 import {
     Icon,
     Button
 } from 'react-native-elements';
+import Spinner from 'react-native-loading-spinner-overlay';
 import RecipeSearch from './RecipeSearch';
 import RecipeListItem from './RecipeItemList';
 import uuidv1 from 'uuid/v1';
 import { handlerMessageToast, API_URI } from '../../config/utils';
 
 
-export default class RecipeList extends Component {
+export default class RecipeList extends PureComponent {
     constructor(props) {
         super(props);
 
@@ -30,7 +31,11 @@ export default class RecipeList extends Component {
 
             refreshing: false,
             loading: false,
-            animating: true,
+            animating: false,
+
+            isVisible: false,
+
+            textSpinner: ''
         };
     }
 
@@ -47,19 +52,22 @@ export default class RecipeList extends Component {
                 name='home' type='font-awesome'
               />
             ),
-            headerLeft: <Icon name='bars' underlayColor='transparent' type='font-awesome' iconStyle={{ marginLeft: 10}} color='#fff' onPress={()=>{ navigation.navigate('DrawerOpen'); }} />
+            headerLeft: <Icon name='bars' underlayColor='transparent' type='font-awesome' iconStyle={{ marginLeft: 10}} color='#fff' onPress={()=>{ navigation.navigate('DrawerOpen'); }} />,
+            headerRight: <Icon name='info' iconStyle={{ marginRight: 10}} color='#fff' underlayColor='transparent' /> 
         }
     };
 
     _keyExtractor = (item, index) => index;
 
-    onSearchRecipes = (terms = '') => {
+    onSearchRecipes = (terms) => {
         this.setState({
-            terms: terms ? terms : this.state.terms,
-            loading: true
+            terms,
+            loading: true,
+            isVisible: true,
+            textSpinner: 'Pesquisando...'
         })
-        let keyByTerms = uuidv1(this.state.terms.replace(',', ''));
-        fetch(`${API_URI}/recipes/search/?keyByTerms=${keyByTerms}&terms=${this.state.terms.replace(',', ' ')}&limit=${this.state.limit}&skip=${this.state.skip}`, {
+        let keyByTerms = uuidv1(this.state.terms);
+        fetch(`${API_URI}/recipes/search/?keyByTerms=${keyByTerms}&terms=${terms}&limit=${this.state.limit}&skip=${this.state.skip}`, {
             method: 'GET',
             headers: {
                 'Host': 'fastfoodapi.herokuapp.com',
@@ -72,6 +80,7 @@ export default class RecipeList extends Component {
             }
         })
         .then((response) => {
+            console.log('response', response);
             if (response.status === 200) {
                 let recipes = JSON.parse(response._bodyInit).recipes;
                 this.setState({
@@ -83,12 +92,31 @@ export default class RecipeList extends Component {
             this.setState({
                 loading: false,
                 animating: false,
-                refreshing: false
+                refreshing: false,
+                isVisible: false,
+
+                textSpinner: ''
             });
         })
         .catch((error) => {
             handlerMessageToast(error.message);
         });
+    }
+
+    onClearRecipes = (terms) => {
+        if (terms === '') {
+            this.setState({
+                recipes: [],
+                isVisible: true,
+                textSpinner: 'Limpando Resultado...'
+            });
+        }
+        setTimeout(() => {
+            this.setState({
+                isVisible: false,
+                textSpinner: ''
+            })
+        }, 1000);
     }
 
     onLearnMore = (recipe) => {
@@ -131,12 +159,14 @@ export default class RecipeList extends Component {
     _renderItem = ({ item }) => (
         <RecipeListItem 
             key={item._id}
+            site_name={item.site_name}
             image={item.image}
+            image_site={item.image_site}
             title={item.title}
             siteName={item.site_name}
             recipeLink={item.recipe_link}
-            preparationTime={item.preparation_time.length === 0 ? Math.floor(Math.random() * 60) + 30 : item.preparation_time}
-            portions={item.portions.length === 0 ? Math.floor(Math.random() * 10) + 3 : item.portions}
+            preparationTime={item.preparation_time}
+            portions={item.portions}
             ingredients={item.ingredients}
             steps={item.steps}
             onLearnMore={() => this.onLearnMore(item)}
@@ -153,19 +183,37 @@ export default class RecipeList extends Component {
                     
                 }}
             >
-                <RecipeSearch onSearchRecipes={this.onSearchRecipes} />
-                <FlatList
-                    data={this.state.recipes}
-                    renderItem={this._renderItem}
-                    keyExtractor={this._keyExtractor}
-                    ListFooterComponent={this.renderFooter}
-                    onRefresh={this.handleRefresh}
-                    refreshing={this.state.refreshing}
-                    onEndReached={this.handleLoadMore}
-                    onEndReachedThreshold={50}
-                    disableVirtualization={false}
-                    style={{marginVertical: 0}}
-                    />
+                <Spinner visible={this.state.isVisible} textContent={this.state.textSpinner} cancelable={true} animation='fade' size='large' textStyle={{color: '#FFF'}} />
+                <RecipeSearch onSearchRecipes={this.onSearchRecipes} onClearRecipes={this.onClearRecipes}/>
+                {
+                    this.state.recipes.length === 0 && (
+                        <View style={styles.container}>
+                            <Text style={styles.welcome}>
+                                — Bem-vindo ao Takbando! —
+                            </Text>
+                            <Text style={styles.instructions}>
+                                Ex: arroz feijão tomate cebola
+                            </Text>
+                      </View>
+                    )
+                }
+
+                {
+                    this.state.recipes.length !== 0 && (
+                        <FlatList
+                            data={this.state.recipes}
+                            renderItem={this._renderItem}
+                            keyExtractor={this._keyExtractor}
+                            ListFooterComponent={this.renderFooter}
+                            
+                            refreshing={this.state.refreshing}
+                            
+                            onEndReachedThreshold={50}
+                            disableVirtualization={false}
+                            style={{marginVertical: 0}}
+                            />
+                    )
+                }
             </View>
         );
     }
@@ -175,5 +223,26 @@ const styles = StyleSheet.create({
     icon: {
       width: 24,
       height: 24,
+    },
+
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#F5FCFF',
+    },
+    welcome: {
+        fontSize: 22,
+        textAlign: 'center',
+        margin: 10,
+        color: '#333333',
+        fontFamily: 'Comfortaa-Bold'
+    },
+    instructions: {
+        textAlign: 'center',
+        color: '#333333',
+        marginBottom: 5,
+        fontSize: 22,
+        fontFamily: 'LeckerliOne-Regular',
     },
 });

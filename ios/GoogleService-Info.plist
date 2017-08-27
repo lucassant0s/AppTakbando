@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AD_UNIT_ID_FOR_BANNER_TEST</key>
+	<string>ca-app-pub-3940256099942544/2934735716</string>
+	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
+	<string>ca-app-pub-3940256099942544/4411468910</string>
+	<key>CLIENT_ID</key>
+	<string>948103163048-oo9amirg3c9so12ef8qqrbrahi7ttvcs.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.948103163048-oo9amirg3c9so12ef8qqrbrahi7ttvcs</string>
+	<key>API_KEY</key>
+	<string>AIzaSyB7A_k10uI___m-TjGWaByXiSZx7OY-ueg</string>
+	<key>GCM_SENDER_ID</key>
+	<string>948103163048</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.takbando</string>
+	<key>PROJECT_ID</key>
+	<string>takbando-2ce6b</string>
+	<key>STORAGE_BUCKET</key>
+	<string>takbando-2ce6b.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<true/>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false/>
+	<key>IS_APPINVITE_ENABLED</key>
+	<false/>
+	<key>IS_GCM_ENABLED</key>
+	<true/>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true/>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:948103163048:ios:8f42d6823a5d9153</string>
+	<key>DATABASE_URL</key>
+	<string>https://takbando-2ce6b.firebaseio.com</string>
+</dict>
+</plist>

@@ -28,7 +28,7 @@ export default class MessageListItem extends Component {
         return (
             <Card
                 title={this.state.message.title}
-                image={{ uri: this.state.message.imageMessage}}>
+                image={{ uri: this.state.message.image}}>
                     <Text style={{marginBottom: 10}}>
                         {this.state.message.message}
                     </Text>

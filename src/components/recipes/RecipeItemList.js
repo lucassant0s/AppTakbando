@@ -2,7 +2,7 @@ import _throttle from 'lodash/throttle';
 import React, { Component } from 'react';
 import {
     View,
-    Image,
+    ImageBackground,
     Text,
     StyleSheet,
     TouchableOpacity,
@@ -28,16 +28,17 @@ export default class RecipeListItem extends Component {
         super(props);
 
         this.state = {
-            userLoggin: true
+            userLoggin: false
         }
     }
 
     render () {
         const onLearnMore = _throttle(this.props.onLearnMore, 300, { 'trailing': false });
+        const preparationTime = this.props.site_name === 'All Recipes' ? this.props.preparationTime : `${this.props.preparationTime} minutos`;
         return (
             <TouchableOpacity onPress={onLearnMore} underlayColor='#fff' activeOpacity={1} accessible={true}>
-            <Image 
-                source={{ uri: 'http://img.itdg.com.br/tdg/images/recipes/000/007/945/230248/230248_original.jpg?mode=crop&width=370&height=278' }} 
+            <ImageBackground 
+                source={{ uri: this.props.image }} 
                 style={styles.container}
             >
                 <View style={{height: 355, flexDirection: 'column-reverse'}}>
@@ -46,13 +47,13 @@ export default class RecipeListItem extends Component {
                         <Text 
                             style={{fontSize: 10, marginLeft: 3, marginRight: 5, marginBottom: 5, fontFamily: 'Lato-Regular', color: '#000'}}
                         >
-                            0 Porções
+                            {this.props.portions} Porções
                         </Text>
                         <Icon name='clock-o' size={10} type='font-awesome' />
                         <Text 
                             style={{fontSize: 10, marginLeft: 3, marginRight: 5, marginBottom: 5, fontFamily: 'Lato-Regular', color: '#000'}}
                         >
-                            0 Minutos
+                            {preparationTime}
                         </Text>
                         {
                             this.state.userLoggin && (
@@ -72,14 +73,14 @@ export default class RecipeListItem extends Component {
                         <Avatar
                             medium
                             rounded
-                            source={{uri: 'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg'}}
+                            source={{uri: this.props.image_site}}
                             onPress={this.onLearnMore}
                             containerStyle={{ backgroundColor: '#fff', width: 55, height: 55}}
                             activeOpacity={0.7}
                         />
                     </View>
                 </View>
-            </Image>
+            </ImageBackground>
             </TouchableOpacity>
         );
     }
