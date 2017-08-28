@@ -7,6 +7,9 @@ import {
     Image,
     ActivityIndicator,
     StyleSheet,
+    Alert,
+    AlertIOS,
+    Platform
 } from 'react-native';
 import {
     Icon,
@@ -37,10 +40,14 @@ export default class RecipeList extends PureComponent {
 
             textSpinner: ''
         };
+
+        this.onAlertInfoMessages = this.onAlertInfoMessages.bind(this);
     }
 
     componentDidMount = () => {
-        
+        this.props.navigation.setParams({
+            onAlertInfoMessages: this.onAlertInfoMessages
+        });
     }
 
     static navigationOptions = ({ navigation }) => {
@@ -53,7 +60,7 @@ export default class RecipeList extends PureComponent {
               />
             ),
             headerLeft: <Icon name='bars' underlayColor='transparent' type='font-awesome' iconStyle={{ marginLeft: 10}} color='#fff' onPress={()=>{ navigation.navigate('DrawerOpen'); }} />,
-            headerRight: <Icon name='info' iconStyle={{ marginRight: 10}} color='#fff' underlayColor='transparent' /> 
+            headerRight: <Icon name='info' iconStyle={{ marginRight: 10}} color='#fff' underlayColor='transparent' onPress={() => navigation.state.params.onAlertInfoMessages()} /> 
         }
     };
 
@@ -119,6 +126,27 @@ export default class RecipeList extends PureComponent {
         }, 1000);
     }
 
+    onAlertInfoMessages = () => {
+        if (Platform.OS === 'android')  {
+            Alert.alert(
+                'Info',
+                'Sabemos o quanto é difícil chegar ao fim do mês. Grana curta, dispensa quase vazia, a geladeira igual ao Polo Norte. Pensando nisto resolvemos lhe dá uma mãozinha, para  que você chegue até o próximo mês comendo bem, fazendo bom uso do itens da sua dispensa, e a melhor parte:sem gastar nada. Receitas saborosas, rápidas com o que você tem na sua casa para salvar seus dias, você se sentirá um verdadeiro masterchef. \n v1.0.0',
+                [
+                    {text: 'OK', onPress: () => console.log('OK Pressend')},
+                ],
+                { cancelable: false }
+            );
+        } else {
+            AlertIOS.alert(
+                'Info',
+                'Sabemos o quanto é difícil chegar ao fim do mês. Grana curta, dispensa quase vazia, a geladeira igual ao Polo Norte. Pensando nisto resolvemos lhe dá uma mãozinha, para  que você chegue até o próximo mês comendo bem, fazendo bom uso do itens da sua dispensa, e a melhor parte:sem gastar nada. Receitas saborosas, rápidas com o que você tem na sua casa para salvar seus dias, você se sentirá um verdadeiro masterchef. \n v1.0.0',
+                [
+                    {text: 'OK', onPress: () => console.log('OK Pressend')},
+                ]
+            );
+        }
+    }
+
     onLearnMore = (recipe) => {
         this.props.navigation.navigate('RecipeItemDetail', {...recipe});
     }
@@ -180,7 +208,6 @@ export default class RecipeList extends PureComponent {
                     flex: 1,
                     flexDirection: 'column',
                     justifyContent: 'flex-start',
-                    
                 }}
             >
                 <Spinner visible={this.state.isVisible} textContent={this.state.textSpinner} cancelable={true} animation='fade' size='large' textStyle={{color: '#FFF'}} />
@@ -190,6 +217,9 @@ export default class RecipeList extends PureComponent {
                         <View style={styles.container}>
                             <Text style={styles.welcome}>
                                 — Bem-vindo ao Takbando! —
+                            </Text>
+                            <Text style={styles.slagan}>
+                                Dispensa cheia até o fim do mês.
                             </Text>
                             <Text style={styles.instructions}>
                                 Ex: arroz feijão tomate cebola
@@ -232,11 +262,18 @@ const styles = StyleSheet.create({
         backgroundColor: '#F5FCFF',
     },
     welcome: {
-        fontSize: 22,
+        fontSize: 18,
         textAlign: 'center',
         margin: 10,
         color: '#333333',
         fontFamily: 'Comfortaa-Bold'
+    },
+    slagan: {
+        textAlign: 'center',
+        color: '#333333',
+        marginBottom: 5,
+        fontSize: 20,
+        fontFamily: 'Lato-Regular',
     },
     instructions: {
         textAlign: 'center',

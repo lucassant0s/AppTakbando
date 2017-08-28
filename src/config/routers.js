@@ -97,7 +97,7 @@ export const DonateStack = StackNavigator({
     Donate: {
         screen: Donate,
         navigationOptions: {
-            title: 'Donates',
+            title: 'Doações',
             titleStyle: {
                 alignSelf: 'center',
             },

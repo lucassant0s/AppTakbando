@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {
     View,
+    ScrollView,
     Text,
     StyleSheet
 } from 'react-native';
@@ -9,7 +10,9 @@ import {
     FormLabel,
     FormValidationMessage,
     Button,
-    Icon
+    Icon,
+    Card,
+    Divider
 } from 'react-native-elements';
 
 
@@ -38,39 +41,39 @@ export default class Feedback extends Component {
 
     render () {
         return (
-            <View style={{
-                flex: 1,
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center'
-            }}>
-                <View>
-                    <Text>
-                        Para melhorar nossa interação nossos usuários envie seu feeback.
+            <ScrollView style={{backgroundColor: '#F5FCFF'}}>
+                <Card
+                    imageWrapperStyle={{ marginTop: -36}}
+                    containerStyle={{ marginBottom: 10}}
+                    image={require('../../images/MARCA.png')}>
+
+                    <Text style={{fontSize: 18, justifyContent: 'space-around', fontFamily: 'Lato-Regular', }}>
+                        {'Nós da equipe Takbando, estamos sempre trabalhando para maior satisfação dos nossos usuários, por isso contamos com sua ajuda, seja ela com elogios, criticas ou sugestões. Dúvidas? Estamos aqui para esclarecê-las! '}
                     </Text>
-                </View>
 
-                <View>
-                    <FormLabel>Nome</FormLabel>
-                    <FormInput onChangeText={(name) => this.setState({ name })}/>
-                    <FormValidationMessage>Error message</FormValidationMessage>
+                    <Divider style={{ backgroundColor: '#7cc532' }} />
 
-                    <FormLabel>Email</FormLabel>
-                    <FormInput onChangeText={(email) => this.setState({ email })}/>
-                    <FormValidationMessage>Error message</FormValidationMessage>
+                    <View style={{ marginBottom: 20}}>
+                        <FormLabel labelStyle={{ fontSize: 16, fontFamily: 'Comfortaa-Regular'}}>Name</FormLabel>
+                        <FormInput underlineColorAndroid='#999'/>
 
-                    <FormLabel>Mensagem</FormLabel>
-                    <FormInput onChangeText={(message) => this.setState({ message })}/>
-                    <FormValidationMessage>Error message</FormValidationMessage>
-                </View>
+                        <FormLabel labelStyle={{ fontSize: 16, fontFamily: 'Comfortaa-Regular'}}>E-mail</FormLabel>
+                        <FormInput underlineColorAndroid='#999'/>
 
-                <View>
+                        <FormLabel labelStyle={{ fontSize: 16, fontFamily: 'Comfortaa-Regular'}}>Mensagem</FormLabel>
+                        <FormInput underlineColorAndroid='#999'/>
+                    </View>
+
                     <Button
-                        raised
-                        icon={{name: 'cached'}}
-                        title='BUTTON WITH ICON' />
-                </View>
-            </View>
+                        icon={{name: 'sc-telegram', type: 'evilicon', size: 22}}
+                        backgroundColor='#03A9F4'
+                        fontFamily='Lato'
+                        iconRight={true}
+                        textStyle={{ fontWeight: '500' }}
+                        buttonStyle={{borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0}}
+                        title='ENVIAR' />
+                </Card>
+            </ScrollView>
         );
     }
 }
