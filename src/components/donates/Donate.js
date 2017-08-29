@@ -81,7 +81,7 @@ export default class Donate extends Component {
                     FUTURAS FUNCIONALIDADES:
                 </Text>
                 <Text style={{marginBottom: 10, fontSize: 16, fontFamily: 'Lato-Regular', fontWeight: '400'}}>
-                    {'- Adição de novas receitas \n- Login \n- Interações entre usuários \n- Criação de Receitas \n- Avaliações \n- Comentários'}
+                    {'- Adição de novas receitas \n- Criação de usuários \n- Interações entre usuários \n- Criação de Receitas \n- Avaliações \n- Comentários'}
                 </Text>
 
                 <View style={{

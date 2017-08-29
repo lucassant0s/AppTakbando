@@ -14,6 +14,7 @@ import {
     Card,
     Divider
 } from 'react-native-elements';
+import{ handlerMessageToast, API_URI} from '../../config/utils';
 
 
 export default class Feedback extends Component {
@@ -39,9 +40,40 @@ export default class Feedback extends Component {
         }
     };
 
+    onFeedback = () => {
+        const { name, email, message } = this.state;
+        if (name, email, message !== '') {
+            fetch(`${API_URI}/feedback`, {
+                method: 'POST',
+                "headers": {
+                    "content-type": "application/json",
+                    "cache-control": "no-cache",
+                    "postman-token": "9c2218c5-34d7-8f6f-ca4b-babdf85c050a"
+                },
+                body: JSON.stringify({
+                    name: this.state.name,
+                    email: this.state.email,
+                    message: this.state.message
+                })
+            })
+            .then((response) => {
+                if (response.status === 200) handlerMessageToast('Feedback salvo com sucesso!');
+                else handlerMessageToast('Ocorreu algum erro ao tentar salvar seu feedback.');
+            })
+            .catch((error) => {
+                handlerMessageToast(error.message);
+            });
+        } else {
+            handlerMessageToast('Por favor, preencha todos os campos...');
+        }
+    }
+
     render () {
         return (
-            <ScrollView style={{backgroundColor: '#F5FCFF'}}>
+            <ScrollView 
+                keyboardShouldPersistTaps='always'
+                keyboardDismissMode='interactive'    
+                style={{backgroundColor: '#F5FCFF'}}>
                 <Card
                     imageWrapperStyle={{ marginTop: -36}}
                     containerStyle={{ marginBottom: 10}}
@@ -54,14 +86,14 @@ export default class Feedback extends Component {
                     <Divider style={{ backgroundColor: '#7cc532' }} />
 
                     <View style={{ marginBottom: 20}}>
-                        <FormLabel labelStyle={{ fontSize: 16, fontFamily: 'Comfortaa-Regular'}}>Name</FormLabel>
-                        <FormInput underlineColorAndroid='#999'/>
+                        <FormLabel labelStyle={{ fontSize: 16, fontFamily: 'Comfortaa-Regular'}}>Name *</FormLabel>
+                        <FormInput underlineColorAndroid='#999' onChangeText={(name) => this.setState({name})} value={this.state.name} />
 
-                        <FormLabel labelStyle={{ fontSize: 16, fontFamily: 'Comfortaa-Regular'}}>E-mail</FormLabel>
-                        <FormInput underlineColorAndroid='#999'/>
+                        <FormLabel labelStyle={{ fontSize: 16, fontFamily: 'Comfortaa-Regular'}}>E-mail *</FormLabel>
+                        <FormInput underlineColorAndroid='#999' onChangeText={(email) => this.setState({email})} value={this.state.email} />
 
-                        <FormLabel labelStyle={{ fontSize: 16, fontFamily: 'Comfortaa-Regular'}}>Mensagem</FormLabel>
-                        <FormInput underlineColorAndroid='#999'/>
+                        <FormLabel labelStyle={{ fontSize: 16, fontFamily: 'Comfortaa-Regular'}}>Mensagem *</FormLabel>
+                        <FormInput underlineColorAndroid='#999' onChangeText={(message) => this.setState({message})} value={this.state.message} />
                     </View>
 
                     <Button
@@ -71,6 +103,7 @@ export default class Feedback extends Component {
                         iconRight={true}
                         textStyle={{ fontWeight: '500' }}
                         buttonStyle={{borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0}}
+                        onPress={this.onFeedback}
                         title='ENVIAR' />
                 </Card>
             </ScrollView>

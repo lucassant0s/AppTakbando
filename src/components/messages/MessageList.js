@@ -1,34 +1,34 @@
 import React, { Component } from 'react';
 import {
     View,
+    ScrollView,
     ActivityIndicator,
     FlatList,
-    StyleSheet
+    StyleSheet,
+    Text
 } from 'react-native';
 import {
     Icon
 } from 'react-native-elements';
+import Spinner from 'react-native-loading-spinner-overlay';
 import MessageListItem from './MessageListItem';
 import { handlerMessageToast, API_URI } from '../../config/utils';
 
-
-const message = {
-    image: 'https://pbs.twimg.com/media/CMJrb1_WoAA3aPT.png',
-    title: 'Teste Mensagens',
-    message: 'Lorem Ipsum é simplesmente uma simulação de texto da indústria tipográfica e de impressos, e vem sendo utilizado desde o século XVI, quando um impressor desconhecido pegou uma bandeja de tipos e os embaralhou para fazer um livro de modelos de tipos.'
-};
 
 export default class MessageList extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            messages: [...message],
+            messages: [],
             loading: false,
             refreshing: false,
+            withoutMessages: false,
 
             limit: 3,
             skip: 0,
+
+            isVisible: false,
 
             animating: false,
         };
@@ -37,7 +37,8 @@ export default class MessageList extends Component {
     _keyExtractor = (item, index) => index;
 
     componentDidMount = () => {
-        // getListMessage();
+        this.setState({ isVisible: true });
+        this.getListMessage();
     }
 
     static navigationOptions = ({ navigation }) => {
@@ -57,19 +58,18 @@ export default class MessageList extends Component {
         fetch(`${API_URI}/messages`, {
             method: 'GET',
             headers: {
-                'Host': API_URI,
-                'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0',
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-                'Accept-Language': 'en-US,en;q=0.5',
-                'Connection': 'keep-alive',
-                'content-type': 'application/json',
-                'Upgrade-Insecure-Requests': '1'
+                'cache-control': 'no-cache'
             }
         })
         .then((response) => {
-            this.setState({ loading: false });
-            if (response.status === 200) this.setState({ messages: JSON.parse(response._bodyInit).messages });
-            else handlerMessageToast('Error loading messages');
+            this.setState({ loading: false, isVisible: false });
+            if (response.status === 200) { 
+                const messages = JSON.parse(response._bodyInit).messages;
+                this.setState({ 
+                    withoutMessages: messages.length === 0 ? true : false,
+                    messages
+                });
+            } else handlerMessageToast('Error loading messages');
         })
         .catch((error) => {
             handlerMessageToast(error.message);
@@ -117,16 +117,63 @@ export default class MessageList extends Component {
 
     render () {
         return (
-            <MessageListItem 
-                message={message}
-            />
+            <View
+                style={{ 
+                    flex: 1,
+                    flexDirection: 'column',
+                    justifyContent: 'flex-start',   
+                    backgroundColor: '#F5FCFF' }}>
+                <Spinner visible={this.state.isVisible} textContent={this.state.textSpinner} cancelable={true} animation='fade' size='large' textStyle={{color: '#FFF'}} />
+                {
+                    this.state.withoutMessages ?
+                    <View style={styles.container}>
+                        <Text style={styles.welcome}>
+                            — Nenhum mensagem encontrada —
+                        </Text>
+                    </View> 
+                    :
+                    <FlatList
+                        data={this.state.messages}
+                        renderItem={this._renderItem}
+                        keyExtractor={this._keyExtractor}
+                        ListFooterComponent={this.renderFooter}
+                        refreshing={this.state.refreshing}
+                        onEndReachedThreshold={50}
+                        disableVirtualization={false}
+                        style={{marginVertical: 0}}
+                    />
+                }
+            </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
-    icon: {
-      width: 24,
-      height: 24,
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#F5FCFF',
+    },
+    welcome: {
+        fontSize: 18,
+        textAlign: 'center',
+        margin: 10,
+        color: '#333333',
+        fontFamily: 'Comfortaa-Bold'
+    },
+    slagan: {
+        textAlign: 'center',
+        color: '#333333',
+        marginBottom: 5,
+        fontSize: 20,
+        fontFamily: 'Lato-Regular',
+    },
+    instructions: {
+        textAlign: 'center',
+        color: '#333333',
+        marginBottom: 5,
+        fontSize: 22,
+        fontFamily: 'LeckerliOne-Regular',
     },
 });

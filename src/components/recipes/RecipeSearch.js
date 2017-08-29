@@ -25,7 +25,7 @@ export default class RecipeSearch extends Component {
                 inputStyle={{backgroundColor: '#728a59', color: '#fff', fontSize: 16, fontFamily: 'Comfortaa-Regular'}}
                 returnKeyType='search'
                 onSubmitEditing={(event) => this.props.onSearchRecipes(event.nativeEvent.text)}
-                onChangeText={terms => this.props.onClearRecipes(terms)}
+                onChangeText={terms => this.props.onClearRecipes(terms, '', true)}
                 placeholderTextColor='#fff'
                 showLoadingIcon={false}
                 placeholder='Digite os ingredientes...' 

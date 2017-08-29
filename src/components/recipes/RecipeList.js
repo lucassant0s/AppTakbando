@@ -34,9 +34,11 @@ export default class RecipeList extends PureComponent {
 
             refreshing: false,
             loading: false,
-            animating: false,
+            animating: true,
 
             isVisible: false,
+
+            isHandleLoadMore: false,
 
             textSpinner: ''
         };
@@ -66,15 +68,15 @@ export default class RecipeList extends PureComponent {
 
     _keyExtractor = (item, index) => index;
 
-    onSearchRecipes = (terms) => {
+    onSearchRecipes = (terms, key = '', isVisible=true) => {
         this.setState({
             terms,
             loading: true,
-            isVisible: true,
+            isVisible: isVisible,
             textSpinner: 'Pesquisando...'
         })
         let keyByTerms = uuidv1(this.state.terms);
-        fetch(`${API_URI}/recipes/search/?keyByTerms=${keyByTerms}&terms=${terms}&limit=${this.state.limit}&skip=${this.state.skip}`, {
+        fetch(`${API_URI}/recipes/search/?keyByTerms=${key !== '' ? key : keyByTerms}&terms=${terms}&limit=${this.state.limit}&skip=${this.state.skip}`, {
             method: 'GET',
             headers: {
                 'Host': 'fastfoodapi.herokuapp.com',
@@ -87,10 +89,10 @@ export default class RecipeList extends PureComponent {
             }
         })
         .then((response) => {
-            console.log('response', response);
             if (response.status === 200) {
                 let recipes = JSON.parse(response._bodyInit).recipes;
                 this.setState({
+                    isHandleLoadMore: true,
                     recipes: recipes.length === 0 ? recipes : [...this.state.recipes, ...recipes],
                 });
             } else {
@@ -98,10 +100,8 @@ export default class RecipeList extends PureComponent {
             }
             this.setState({
                 loading: false,
-                animating: false,
                 refreshing: false,
                 isVisible: false,
-
                 textSpinner: ''
             });
         })
@@ -162,14 +162,18 @@ export default class RecipeList extends PureComponent {
     }
 
     handleLoadMore = () => {
-        this.setState(
-            {
-              skip: this.state.skip + 4
-            },
-            () => {
-                this.onSearchRecipes();
-            }
-        );
+        if (this.state.isHandleLoadMore) {
+            this.setState(
+                {
+                  skip: this.state.skip + 4,
+                  isVisible: false,
+                },
+                () => {
+                    let keyByTerms = uuidv1(`${this.state.terms} + ${this.state.skip}`);
+                    this.onSearchRecipes(this.state.terms, keyByTerms, false);
+                }
+            );
+        }
     }
 
     renderFooter = () => {
@@ -235,9 +239,9 @@ export default class RecipeList extends PureComponent {
                             renderItem={this._renderItem}
                             keyExtractor={this._keyExtractor}
                             ListFooterComponent={this.renderFooter}
-                            
+                            onEndReached={this.handleLoadMore}
                             refreshing={this.state.refreshing}
-                            
+                            removeClippedSubviews={false} 
                             onEndReachedThreshold={50}
                             disableVirtualization={false}
                             style={{marginVertical: 0}}

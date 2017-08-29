@@ -29,7 +29,7 @@ export default class MessageListItem extends Component {
             <Card
                 title={this.state.message.title}
                 image={{ uri: this.state.message.image}}>
-                    <Text style={{marginBottom: 10}}>
+                    <Text style={{marginBottom: 10, fontSize: 18, justifyContent: 'space-between', fontFamily: 'Lato-Regular'}}>
                         {this.state.message.message}
                     </Text>
             </Card>
